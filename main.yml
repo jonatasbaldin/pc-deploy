@@ -1,0 +1,60 @@
+---
+
+- hosts: localhost
+  sudo: yes
+  user: root
+  
+  handlers:
+  
+  - name: update repo
+    apt: update_cache=yes
+  
+  tasks:
+  
+  # common
+  - name: update cache
+    apt: update_cache=yes
+  
+  - name: upgrade distro
+    apt: upgrade=yes
+  
+  - name: install packages
+    apt: name=terminator,git,remmina*,vim force=yes
+	
+  # spotify
+  - name: spotify key
+    apt-key: keyserver=hkp://keyserver.ubuntu.com:80 id=EBDCB318AD50EC6865090613B00F1FD2C19886
+  
+  - name: spotify repo
+    apt-repository: repo='deb http://repository.spotify.com stable non-free' state=present 
+    notify: update repo
+  
+  - name: spotify package
+    apt: name=spotify-client state=present
+	
+  # virtualbox
+  - name: get virtualbox
+    get_url: url=http://download.virtualbox.org/virtualbox/5.0.10/virtualbox-5.0_5.0.10-104061~Ubuntu~wily_amd64.deb dest=/tmp/virtualbox-5.0_5.0.10-104061~Ubuntu~wily_amd64.deb
+	
+  - name: get extension pack 
+    get_url: url=tp://download.virtualbox.org/virtualbox/5.0.10/Oracle_VM_VirtualBox_Extension_Pack-5.0.10-104061.vbox-extpack dest=/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.10-104061.vbox-extpack
+  
+  - name: install virtualbox
+    apt: deb=/tmp/virtualbox-5.0_5.0.10-104061~Ubuntu~wily_amd64.deb
+	
+  - name: install extension pack
+    shell: VBoxManage extpack install /tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.10-104061.vbox-extpack	
+	
+  # chrome
+  - name: get chrome
+    get_url: url=https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb dest=/tmp/google-chrome-stable_current_amd64.deb
+
+  - name: install chrome
+    apt: deb=/tmp/google-chrome-stable_current_amd64.deb
+	
+  # dotfiles
+  - name: get repo
+    git: repo=https://github.com/jonatasbaldin/linux-env-conf.git dest=/tmp/dotfiles
+	
+  - name: install dotfiles
+    shell: bash /tmp/dotfiles/install.sh /tmp/dotfiles
