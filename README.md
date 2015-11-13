@@ -1,4 +1,3 @@
 # pc-deploy
 Ansible playbook to deploy my personal computer
-
-non-tested
+Not fully tested! DO NOT USE!
