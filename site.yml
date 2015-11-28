@@ -16,7 +16,7 @@
   - name: upgrade distro
     apt: upgrade=yes
   - name: install packages
-    apt: name=terminator,git,vim,remmina*,libcurl3,apparmor,lxc,cgroup-lite force=yes state=present
+    apt: name=terminator,git,vim,remmina*,libcurl3,apparmor,lxc,cgroup-lite,ruby force=yes state=present
   - name: create tmp dir
     file: path=/home/{{ user }}/tmp state=directory mode=0755
 
@@ -61,6 +61,21 @@
     apt: name=docker-engine state=present
   - name: put user in docker group
     user: name={{ user }} groups=docker append=yes
+
+  # skype
+  - name: download skype
+    get_url: url=http://download.skype.com/linux/skype-ubuntu-precise_4.3.0.37-1_i386.deb dest=/home/{{ user }}/tmp/skype-ubuntu-precise_4.3.0.37-1_i386.deb
+  - name: install skype
+    apt: deb=/home/{{ user }}/tmp/skype-ubuntu-precise_4.3.0.37-1_i386.deb
+ 
+  # tmux
+  - name: tmux repo ppa
+    command: add-apt-repository ppa:pi-rho/dev -y
+    notify: update repo 
+  - name: install tmux
+    apt: name=tmux state=present
+  - name: install tmuxinator
+    gem: name=tmuxinator state=present
 
   # dotfiles
   - name: get dotfiles repo
