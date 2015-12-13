@@ -10,7 +10,7 @@
   - name: update cache
     apt: update_cache=yes
   - name: install packages
-    apt: name=aptitude,terminator,git,vim,httpie,remmina*,libcurl3,libqt4-opengl,libsdl1.2debian,apparmor,lxc,cgroup-lite,ruby,python-pip,python-virtualenv,python3-pip force=yes state=present
+    apt: name=aptitude,terminator,git,vim,tree,htop,httpie,remmina*,libcurl3,libqt4-opengl,libsdl1.2debian,apparmor,lxc,cgroup-lite,ruby,python-pip,python-virtualenv,python3-pip force=yes state=present
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
