@@ -75,9 +75,3 @@
     git: repo=https://github.com/jonatasbaldin/linux-env-conf.git dest=/home/{{ user }}/tmp/dotfiles force=yes
   - name: install dotfiles
     command: su - {{ user }} -c  "bash /home/{{ user }}/tmp/dotfiles/install.sh /home/{{ user }}/tmp/dotfiles"
- 
-  # nvidia driver (lenovo z40)
-  - name: get nvidia driver
-    get_url: url=http://us.download.nvidia.com/XFree86/Linux-x86_64/352.63/NVIDIA-Linux-x86_64-352.63.run dest=/home/{{ user }}/tmp
-  - name: install nvidia driver
-    command: sh NVIDIA-Linux-x86_64-352.63.run 
