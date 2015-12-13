@@ -15,6 +15,8 @@
     apt: upgrade=yes
   - name: create tmp dir
     file: path=/home/{{ user }}/tmp state=directory mode=0755
+  - name: create github dir
+    file: path=/home/{{ user }}/github state=directory mode=075
 
   # spotify
   - name: spotify repo key
@@ -84,6 +86,14 @@
 
   # dotfiles
   - name: get dotfiles repo
-    git: repo=https://github.com/jonatasbaldin/linux-env-conf.git dest=/home/{{ user }}/tmp/dotfiles force=yes
+    git: repo=https://github.com/jonatasbaldin/linux-env-conf.git dest=/home/{{ user }}/github/dotfiles force=yes
   - name: install dotfiles
-    command: su - {{ user }} -c  "bash /home/{{ user }}/tmp/dotfiles/install.sh /home/{{ user }}/tmp/dotfiles"
+    command: su - {{ user }} -c  "bash /home/{{ user }}/github/dotfiles/install.sh /home/{{ user }}/github/dotfiles"
+
+  # permissions 
+  - name: set permissions
+    file: path={{ item }} owner={{ user }} group={{ user }} recurse=yes
+    with_items:
+     - /home/{{ user }}/github
+     - /home/{{ user }}/tmp
+
