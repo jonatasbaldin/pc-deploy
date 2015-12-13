@@ -4,19 +4,15 @@
   vars:
     user: jonatas
 
-  handlers:
-  - name: update repo
-    apt: update_cache=yes
-
   tasks:
 
   # common
   - name: update cache
     apt: update_cache=yes
+  - name: install packages
+    apt: name=aptitude,terminator,git,vim,httpie,remmina*,libcurl3,libqt4-opengl,libsdl1.2debian,apparmor,lxc,cgroup-lite,ruby force=yes state=present
   - name: upgrade distro
     apt: upgrade=yes
-  - name: install packages
-    apt: name=terminator,git,vim,httpie,remmina*,libcurl3,apparmor,lxc,cgroup-lite,ruby force=yes state=present
   - name: create tmp dir
     file: path=/home/{{ user }}/tmp state=directory mode=0755
 
@@ -25,7 +21,6 @@
     command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
   - name: spotify repo
     apt_repository: repo='deb http://repository.spotify.com stable non-free' state=present 
-    notify: update repo
   - name: install spotify
     apt: name=spotify-client state=present
 
@@ -56,7 +51,6 @@
     command: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
   - name: docker repo
     apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-trusty main' state=present
-    notify: update repo
   - name: install docker
     apt: name=docker-engine state=present
   - name: put user in docker group
@@ -71,7 +65,6 @@
   # tmux
   - name: tmux repo ppa
     command: add-apt-repository ppa:pi-rho/dev -y
-    notify: update repo 
   - name: install tmux
     apt: name=tmux state=present
   - name: install tmuxinator
@@ -82,3 +75,9 @@
     git: repo=https://github.com/jonatasbaldin/linux-env-conf.git dest=/home/{{ user }}/tmp/dotfiles force=yes
   - name: install dotfiles
     command: su - {{ user }} -c  "bash /home/{{ user }}/tmp/dotfiles/install.sh /home/{{ user }}/tmp/dotfiles"
+ 
+  # nvidia driver (lenovo z40)
+  - name: get nvidia driver
+    get_url: url=http://us.download.nvidia.com/XFree86/Linux-x86_64/352.63/NVIDIA-Linux-x86_64-352.63.run dest=/home/{{ user }}/tmp
+  - name: install nvidia driver
+    command: sh NVIDIA-Linux-x86_64-352.63.run 
