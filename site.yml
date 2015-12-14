@@ -10,7 +10,7 @@
   - name: update cache
     apt: update_cache=yes
   - name: install packages
-    apt: name=aptitude,terminator,git,vim,tree,htop,httpie,remmina*,libcurl3,libqt4-opengl,libsdl1.2debian,apparmor,lxc,cgroup-lite,ruby,python-pip,python-virtualenv,python3-pip force=yes state=present
+    apt: name=aptitude,terminator,git,vim,tree,htop,httpie,libcurl3,libqt4-opengl,libsdl1.2debian,apparmor,lxc,cgroup-lite,ruby,python-pip,python-virtualenv,python3-pip force=yes state=present
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
@@ -18,11 +18,21 @@
   - name: create github dir
     file: path=/home/{{ user }}/github state=directory mode=075
 
+  # remmina
+  - name: remmina repo
+    command: apt-add-repository ppa:remmina-ppa-team/remmina-next
+  - name: update cache
+    apt: update_cache=yes
+  - name: install remmina
+    apt: name=remmina,remmina-plugin-rdp,libfreerdp-plugins-standard state=latest
+
   # spotify
   - name: spotify repo key
     command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
   - name: spotify repo
     apt_repository: repo='deb http://repository.spotify.com stable non-free' state=present 
+  - name: update cache
+    apt: update_cache=yes
   - name: install spotify
     apt: name=spotify-client state=present
 
@@ -53,6 +63,8 @@
     command: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
   - name: docker repo
     apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-trusty main' state=present
+  - name: update cache
+    apt: update_cache=yes
   - name: install docker
     apt: name=docker-engine state=present
   - name: put user in docker group
@@ -67,6 +79,8 @@
   # tmux
   - name: tmux repo ppa
     command: add-apt-repository ppa:pi-rho/dev -y
+  - name: update cache
+    apt: update_cache=yes
   - name: install tmux
     apt: name=tmux state=present
   - name: install tmuxinator
