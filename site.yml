@@ -26,6 +26,9 @@
   # tomato
   - name: tomato repo ppa
     command: add-apt-repository ppa:tomato-team/tomato-stable -y
+  # wireshark
+  - name: wireshark repo ppa
+    comand: add-apt-repository ppa:wireshark-dev/stable -y
   # update repo
   - name: update cache
     apt: update_cache=yes
@@ -59,6 +62,7 @@
       - spotify-client
       - vlc
       - libreoffice
+      - wireshark
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
