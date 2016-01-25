@@ -29,6 +29,9 @@
   # wireshark
   - name: wireshark repo ppa
     command: add-apt-repository ppa:wireshark-dev/stable -y
+  # relay IRC client
+  - name: relay repo ppa
+    comand: apt-add-repository ppa:agronick/relay -y
   # update repo
   - name: update cache
     apt: update_cache=yes
@@ -63,6 +66,7 @@
       - vlc
       - libreoffice
       - wireshark
+      - relay
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
@@ -116,18 +120,28 @@
     pip: name={{ item }} state=present
     with_items:
       - requests
+      - flake8
 
   # python3 libraries
   - name: python3 libraries
     pip: name={{ item }} state=present executable=pip3
     with_items:
       - requests
+      - flake8
 
   # dotfiles
   - name: get dotfiles repo
-    git: repo=https://github.com/jonatasbaldin/linux-env-conf.git dest=/home/{{ user }}/github/dotfiles force=yes
+    git: repo=https://github.com/jonatasbaldin/dotfiles.git dest=/home/{{ user }}/github/dotfiles force=yes
   - name: install dotfiles
     command: su - {{ user }} -c  "bash /home/{{ user }}/github/dotfiles/install.sh /home/{{ user }}/github/dotfiles"
+
+  # vundle and git plugins
+  - name: get vundle
+    git: repo=https://github.com/VundleVim/Vundle.vim.git dest=/home/{{ user }}/.vim/bundle/Vundle.vim force=yes
+  - name: get NERDTree
+    git: repo=https://github.com/scrooloose/nerdtree.git dest=/home/{{ user }}/.vim/bundle/nerdtree force=yes
+  - name: get syntastic
+    git: repo=https://github.com/scrooloose/syntastic.git dest=/home/{{ user }}/.vim/bundle/syntastic force=yes
 
   # permissions 
   - name: set permissions
@@ -135,3 +149,4 @@
     with_items:
      - /home/{{ user }}/github
      - /home/{{ user }}/tmp
+     - /home/{{ user }}/.vim/bundle
