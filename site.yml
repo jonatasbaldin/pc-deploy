@@ -147,3 +147,8 @@
      - /home/{{ user }}/github
      - /home/{{ user }}/tmp
      - /home/{{ user }}/.vim/bundle
+
+  # diable natural copy/paste in pantheon
+  - name: diable natural copy/paste in pantheon
+    command: dconf write /org/pantheon/terminal/settings/natural-copy-paste false
+    when: ansible_distribution  == '\"elementary os\"'
