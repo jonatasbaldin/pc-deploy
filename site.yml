@@ -52,6 +52,8 @@
       - lxc
       - cgroup-lite
       - ruby
+      - cmake
+      - python-dev
       - python-pip
       - python-virtualenv
       - python3-pip 
@@ -135,10 +137,13 @@
   # vundle and git plugins
   - name: get vundle
     git: repo=https://github.com/VundleVim/Vundle.vim.git dest=/home/{{ user }}/.vim/bundle/Vundle.vim force=yes
-  - name: get NERDTree
-    git: repo=https://github.com/scrooloose/nerdtree.git dest=/home/{{ user }}/.vim/bundle/nerdtree force=yes
-  - name: get syntastic
-    git: repo=https://github.com/scrooloose/syntastic.git dest=/home/{{ user }}/.vim/bundle/syntastic force=yes
+  # Vundle install repositories automagically
+  #- name: get NERDTree
+  #  git: repo=https://github.com/scrooloose/nerdtree.git dest=/home/{{ user }}/.vim/bundle/nerdtree force=yes
+  #- name: get syntastic
+  #  git: repo=https://github.com/scrooloose/syntastic.git dest=/home/{{ user }}/.vim/bundle/syntastic force=yes
+  #- name: get youcompleteme
+  #  git: repo=https://github.com/Valloric/YouCompleteMe.git dest=/home/{{ user }}/.vim/bundle/YouCompleteMe force=yes
 
   # permissions 
   - name: set permissions
