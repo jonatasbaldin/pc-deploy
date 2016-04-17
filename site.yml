@@ -73,6 +73,16 @@
   - name: create github dir
     file: path=/home/{{ user }}/github state=directory mode=0755
 
+  # npm packages
+  - name: install NPM Modules globally
+    npm: name={{ item }} state=present global=yes
+    with_items:
+    - js-yaml
+
+  # heroku toolbet
+  - name: install heroku toolbelt
+    shell: wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+
   # virtualbox
   - name: get virtualbox
     get_url: url=http://download.virtualbox.org/virtualbox/5.0.10/virtualbox-5.0_5.0.10-104061~Ubuntu~trusty_amd64.deb dest=/home/{{ user }}/tmp/virtualbox-5.0_5.0.10-104061~Ubuntu~trusty_amd64.deb
@@ -137,13 +147,6 @@
   # vundle and git plugins
   - name: get vundle
     git: repo=https://github.com/VundleVim/Vundle.vim.git dest=/home/{{ user }}/.vim/bundle/Vundle.vim force=yes
-  # Vundle install repositories automagically
-  #- name: get NERDTree
-  #  git: repo=https://github.com/scrooloose/nerdtree.git dest=/home/{{ user }}/.vim/bundle/nerdtree force=yes
-  #- name: get syntastic
-  #  git: repo=https://github.com/scrooloose/syntastic.git dest=/home/{{ user }}/.vim/bundle/syntastic force=yes
-  #- name: get youcompleteme
-  #  git: repo=https://github.com/Valloric/YouCompleteMe.git dest=/home/{{ user }}/.vim/bundle/YouCompleteMe force=yes
 
   # permissions 
   - name: set permissions
@@ -157,3 +160,10 @@
   - name: diable natural copy/paste in pantheon
     command: dconf write /org/pantheon/terminal/settings/natural-copy-paste false
     when: ansible_distribution  == '\"elementary os\"'
+
+  # install xflux (dual monitor)
+  - name: get xlfux
+    get_url: url=https://herf.org/flux/xflux-pre.tgz dest=/home/{{ user }}/tmp/xflux-pre.tgz
+    
+  - name: extract xlfux
+    unarchive: src=/home/{{ user }}/tmp/xflux-pre.tgz dest=/usr/bin/
