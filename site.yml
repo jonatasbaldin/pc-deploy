@@ -71,6 +71,8 @@
       - xchat
       - rar
       - ffmpeg
+      - nodejs
+      - npm
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
