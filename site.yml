@@ -154,6 +154,20 @@
   # vundle and git plugins
   - name: get vundle
     git: repo=https://github.com/VundleVim/Vundle.vim.git dest=/home/{{ user }}/.vim/bundle/Vundle.vim force=yes
+    
+  # install vundle plugins
+  - name: install vundle plugins
+    command: vim +PluginInstall +qall
+    
+  # compile YouCompleteMe 
+  - name: compile YouCompleteMe
+    command: ./install.py
+    args:
+      chdir: ~/.vim/bundle/YouCompleteMe
+      
+  # install vundle plugins again (after compiling YCM)
+  - name: install vundle plugins
+    command: vim +PluginInstall +qall
 
   # permissions 
   - name: set permissions
