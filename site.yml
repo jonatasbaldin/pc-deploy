@@ -99,13 +99,13 @@
 
   # virtualbox
   - name: get virtualbox
-    get_url: url=http://download.virtualbox.org/virtualbox/5.0.10/virtualbox-5.0_5.0.10-104061~Ubuntu~trusty_amd64.deb dest=/home/{{ user }}/tmp/virtualbox-5.0_5.0.10-104061~Ubuntu~trusty_amd64.deb
+    get_url: url=http://download.virtualbox.org/virtualbox/5.0.20/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb dest=/home/{{ user }}/tmp/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb
   - name: get extension pack 
-    get_url: url=http://download.virtualbox.org/virtualbox/5.0.10/Oracle_VM_VirtualBox_Extension_Pack-5.0.10-104061.vbox-extpack dest=/home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.10-104061.vbox-extpack
+    get_url: url=http://download.virtualbox.org/virtualbox/5.0.20/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack dest=/home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack
   - name: install virtualbox
-    command: dpkg -i /home/{{ user }}/tmp/virtualbox-5.0_5.0.10-104061~Ubuntu~trusty_amd64.deb creates=/home/{{ user }}/tmp/vb-ext
+    command: dpkg -i /home/{{ user }}/tmp/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb creates=/home/{{ user }}/tmp/vb-ext
   - name: install extension pack
-    command: VBoxManage extpack install /home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.10-104061.vbox-extpack --replace
+    command: VBoxManage extpack install /home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack --replace
  
   # chrome
   - name: get chrome
