@@ -32,6 +32,9 @@
   # ffmpeg
   - name: ffmpeg repo ppa
     command: add-apt-repository ppa:mc3man/trusty-media -y
+  # nodejs
+  - name: nodejs repo
+    shell: curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
   # update repo
   - name: update cache
     apt: update_cache=yes
@@ -72,13 +75,17 @@
       - rar
       - ffmpeg
       - nodejs
-      - npm
+      - build-essential
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
     file: path=/home/{{ user }}/tmp state=directory mode=0755
   - name: create github dir
     file: path=/home/{{ user }}/github state=directory mode=0755
+
+  # nodejs symbolic link
+  - name: nodejs symbolic link
+    file: src=/usr/bin/node dest=/usr/sbin/node state=link
 
   # npm packages
   - name: install NPM Modules globally
