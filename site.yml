@@ -76,6 +76,9 @@
       - ffmpeg
       - nodejs
       - build-essential
+      - ttf-ancient-fonts
+      - tidy #html syntastic
+      - mysql-client
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
@@ -137,6 +140,10 @@
     apt: name=tmux state=present
   - name: install tmuxinator
     gem: name=tmuxinator state=present
+
+  # terminal-emojify
+  - name: install terminal-emojify
+    gem: name=terminal-emojify state=present
 
   # python libraries
   - name: python libraries
