@@ -79,6 +79,9 @@
       - ttf-ancient-fonts
       - tidy #html syntastic
       - mysql-client
+      - php5-cli
+      - php-pear
+
   - name: upgrade distro
     apt: upgrade=yes
   - name: create tmp dir
@@ -158,6 +161,7 @@
     with_items:
       - requests
       - flake8
+      - saws
 
   # dotfiles
   - name: get dotfiles repo
@@ -202,3 +206,7 @@
     
   - name: extract xlfux
     unarchive: src=/home/{{ user }}/tmp/xflux-pre.tgz dest=/usr/bin/
+
+  # php configuratoins
+  - name: install phpcs
+    pear: name=PHP_CodeSniffer state=present
