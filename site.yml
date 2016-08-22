@@ -6,38 +6,41 @@
 
   tasks:
 
-  # all repos first
-  # remmina
-  - name: remmina repo
-    command: apt-add-repository ppa:remmina-ppa-team/remmina-next
-  # spotify
-  - name: spotify repo key
-    command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
-  - name: spotify repo
-    apt_repository: repo='deb http://repository.spotify.com stable non-free' state=present 
-  # docker
-  - name: docker repo key
-    command: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-  - name: docker repo
-    apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-trusty main' state=present
-  # tmux
-  - name: tmux repo ppa
-    command: add-apt-repository ppa:pi-rho/dev -y
-  # tomato
-  - name: tomato repo ppa
-    command: add-apt-repository ppa:tomato-team/tomato-stable -y
-  # wireshark
-  - name: wireshark repo ppa
-    command: add-apt-repository ppa:wireshark-dev/stable -y
-  # ffmpeg
-  - name: ffmpeg repo ppa
-    command: add-apt-repository ppa:mc3man/trusty-media -y
-  # nodejs
-  - name: nodejs repo
-    shell: curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-  # update repo
-  - name: update cache
-    apt: update_cache=yes
+
+  - block:
+    # all repos first
+    # remmina
+    - name: remmina repo
+      command: apt-add-repository ppa:remmina-ppa-team/remmina-next
+    # spotify
+    - name: spotify repo key
+      command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
+    - name: spotify repo
+      apt_repository: repo='deb http://repository.spotify.com stable non-free' state=present 
+    # docker
+    - name: docker repo key
+      command: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    - name: docker repo
+      apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-trusty main' state=present
+    # tmux
+    - name: tmux repo ppa
+      command: add-apt-repository ppa:pi-rho/dev -y
+    # tomato
+    - name: tomato repo ppa
+      command: add-apt-repository ppa:tomato-team/tomato-stable -y
+    # wireshark
+    - name: wireshark repo ppa
+      command: add-apt-repository ppa:wireshark-dev/stable -y
+    # ffmpeg
+    - name: ffmpeg repo ppa
+      command: add-apt-repository ppa:mc3man/trusty-media -y
+    # nodejs
+    - name: nodejs repo
+      shell: curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+    # update repo
+    - name: update cache
+      apt: update_cache=yes
+    tags: repository
 
   # all installations/configuration
   # common
@@ -81,72 +84,88 @@
       - mysql-client
       - php5-cli
       - php-pear
+    tags: os_packages
 
   - name: upgrade distro
     apt: upgrade=yes
+    tags: os_upgrade
+
   - name: create tmp dir
-    file: path=/home/{{ user }}/tmp state=directory mode=0755
-  - name: create github dir
-    file: path=/home/{{ user }}/github state=directory mode=0755
+    file: path=/home/{{ user }}/{{ item }} state=directory mode=0755
+    with_items:
+      - tmp
+      - gitub
+    tags: dir
 
   # nodejs symbolic link
   - name: nodejs symbolic link
     file: src=/usr/bin/node dest=/usr/sbin/node state=link
+    tags: nodejs
 
   # npm packages
   - name: install NPM Modules globally
     npm: name={{ item }} state=present global=yes
     with_items:
     - js-yaml
+    tags: nodejs
 
   # heroku toolbet
   - name: install heroku toolbelt
     shell: wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+    tags: heroku
 
   # virtualbox
-  - name: get virtualbox
-    get_url: url=http://download.virtualbox.org/virtualbox/5.0.20/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb dest=/home/{{ user }}/tmp/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb
-  - name: get extension pack 
-    get_url: url=http://download.virtualbox.org/virtualbox/5.0.20/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack dest=/home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack
-  - name: install virtualbox
-    command: dpkg -i /home/{{ user }}/tmp/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb creates=/home/{{ user }}/tmp/vb-ext
-  - name: install extension pack
-    command: VBoxManage extpack install /home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack --replace
+  - block:
+    - name: get virtualbox
+      get_url: url=http://download.virtualbox.org/virtualbox/5.0.20/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb dest=/home/{{ user }}/tmp/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb
+    - name: get extension pack 
+      get_url: url=http://download.virtualbox.org/virtualbox/5.0.20/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack dest=/home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack
+    - name: install virtualbox
+      command: dpkg -i /home/{{ user }}/tmp/virtualbox-5.0_5.0.20-106931~Ubuntu~trusty_amd64.deb creates=/home/{{ user }}/tmp/vb-ext
+    - name: install extension pack
+      command: VBoxManage extpack install /home/{{ user }}/tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.20-106931.vbox-extpack --replace
+    tags: virtualbox
  
   # chrome
-  - name: get chrome
-    get_url: url=https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb dest=/home/{{ user }}/tmp/google-chrome-stable_current_amd64.deb
-  - name: install chrome
-    apt: deb=/home/{{ user }}/tmp/google-chrome-stable_current_amd64.deb
-    ignore_errors: yes
+  - block:
+    - name: get chrome
+      get_url: url=https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb dest=/home/{{ user }}/tmp/google-chrome-stable_current_amd64.deb
+    - name: install chrome
+      apt: deb=/home/{{ user }}/tmp/google-chrome-stable_current_amd64.deb
+      ignore_errors: yes
+    tags: chrome
 
   # vagrant
-  - name: get vagrant
-    get_url: url=https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb dest=/home/{{ user }}/tmp/vagrant_1.7.4_x86_64.deb
-  - name: install vagrant
-    apt: deb=/home/{{ user }}/tmp/vagrant_1.7.4_x86_64.deb
+  - block:
+    - name: get vagrant
+      get_url: url=https://releases.hashicorp.com/vagrant/1.8.5/vagrant_1.8.5_x86_64.deb dest=/home/{{ user }}/tmp/
+    - name: install vagrant
+      apt: deb=/home/{{ user }}/tmp/vagrant_1.8.5_x86_64.deb
+    tags: vagrant
 
   # docker
-  - name: install docker
-    apt: name=docker-engine state=present
-  - name: put user in docker group
-    user: name={{ user }} groups=docker append=yes
+  - block:
+    - name: install docker
+      apt: name=docker-engine state=present
+    - name: put user in docker group
+      user: name={{ user }} groups=docker append=yes
+    tags: docker
 
   # skype
-  - name: download skype
-    get_url: url=http://download.skype.com/linux/skype-ubuntu-precise_4.3.0.37-1_i386.deb dest=/home/{{ user }}/tmp/skype-ubuntu-precise_4.3.0.37-1_i386.deb
-  - name: install skype
-    apt: deb=/home/{{ user }}/tmp/skype-ubuntu-precise_4.3.0.37-1_i386.deb
+  - block:
+    - name: download skype
+      get_url: url=http://download.skype.com/linux/skype-ubuntu-precise_4.3.0.37-1_i386.deb dest=/home/{{ user }}/tmp/skype-ubuntu-precise_4.3.0.37-1_i386.deb
+    - name: install skype
+      apt: deb=/home/{{ user }}/tmp/skype-ubuntu-precise_4.3.0.37-1_i386.deb
+    tags: skype
  
   # tmux
-  - name: install tmux
-    apt: name=tmux state=present
-  - name: install tmuxinator
-    gem: name=tmuxinator state=present
-
-  # terminal-emojify
-  - name: install terminal-emojify
-    gem: name=terminal-emojify state=present
+  - block:
+    - name: install tmux
+      apt: name=tmux state=present
+    - name: install tmuxinator
+      gem: name=tmuxinator state=present
+    tags: tmux
 
   # python libraries
   - name: python libraries
@@ -154,6 +173,8 @@
     with_items:
       - requests
       - flake8
+      - virtualenvwrapper
+    tags: python2
 
   # python3 libraries
   - name: python3 libraries
@@ -162,31 +183,35 @@
       - requests
       - flake8
       - saws
+      - virtualenvwrapper
+    tags: python3
 
   # dotfiles
-  - name: get dotfiles repo
-    git: repo=https://github.com/jonatasbaldin/dotfiles.git dest=/home/{{ user }}/github/dotfiles force=yes
-  - name: install dotfiles
-    command: su - {{ user }} -c  "bash /home/{{ user }}/github/dotfiles/install.sh /home/{{ user }}/github/dotfiles"
+  - block: 
+    - name: get dotfiles repo
+      git: repo=https://github.com/jonatasbaldin/dotfiles.git dest=/home/{{ user }}/github/dotfiles force=yes
+    - name: install dotfiles
+      command: su - {{ user }} -c  "bash /home/{{ user }}/github/dotfiles/install.sh /home/{{ user }}/github/dotfiles"
+    tags: dotfiles
 
-  # vundle and git plugins
-  - name: get vundle
-    git: repo=https://github.com/VundleVim/Vundle.vim.git dest=/home/{{ user }}/.vim/bundle/Vundle.vim force=yes
+  - block: 
+    # vundle and git plugins
+    - name: get vundle
+      git: repo=https://github.com/VundleVim/Vundle.vim.git dest=/home/{{ user }}/.vim/bundle/Vundle.vim force=yes
+    # install vundle plugins
+    - name: install vundle plugins
+      command: vim +PluginInstall +qall
+    # compile YouCompleteMe 
+    - name: compile YouCompleteMe
+      command: ./install.py
+      args:
+        chdir: ~/.vim/bundle/YouCompleteMe
+    # install vundle plugins again (after compiling YCM)
+    - name: install vundle plugins
+      command: vim +PluginInstall +qall
+    tags: vim
     
-  # install vundle plugins
-  - name: install vundle plugins
-    command: vim +PluginInstall +qall
-    
-  # compile YouCompleteMe 
-  - name: compile YouCompleteMe
-    command: ./install.py
-    args:
-      chdir: ~/.vim/bundle/YouCompleteMe
       
-  # install vundle plugins again (after compiling YCM)
-  - name: install vundle plugins
-    command: vim +PluginInstall +qall
-
   # permissions 
   - name: set permissions
     file: path={{ item }} owner={{ user }} group={{ user }} recurse=yes
@@ -194,19 +219,18 @@
      - /home/{{ user }}/github
      - /home/{{ user }}/tmp
      - /home/{{ user }}/.vim/bundle
+    tags: permissions
 
   # diable natural copy/paste in pantheon
   - name: diable natural copy/paste in pantheon
     command: dconf write /org/pantheon/terminal/settings/natural-copy-paste false
     when: ansible_distribution  == '\"elementary os\"'
+    tags: elementary
 
   # install xflux (dual monitor)
-  - name: get xlfux
-    get_url: url=https://herf.org/flux/xflux-pre.tgz dest=/home/{{ user }}/tmp/xflux-pre.tgz
-    
-  - name: extract xlfux
-    unarchive: src=/home/{{ user }}/tmp/xflux-pre.tgz dest=/usr/bin/
-
-  # php configuratoins
-  - name: install phpcs
-    pear: name=PHP_CodeSniffer state=present
+  - block:
+    - name: get xlfux
+      get_url: url=https://herf.org/flux/xflux-pre.tgz dest=/home/{{ user }}/tmp/xflux-pre.tgz
+    - name: extract xlfux
+      unarchive: src=/home/{{ user }}/tmp/xflux-pre.tgz dest=/usr/bin/
+    tags: xflux
